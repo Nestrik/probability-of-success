@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Created-By: Tatsienko A.K. (nestrik66@gmail.com)
+Main-Class: gui
+
