@@ -16,8 +16,8 @@ public class gui {
     JFrame mainFrame;
 
     SpinnerModel successQuantiseM = new SpinnerNumberModel(4, 1, 6, 1);
-    SpinnerModel quantiseOfCubesM = new SpinnerNumberModel(2, 1, 10, 1);
-    SpinnerModel requiredQuantiseOfSuccessM = new SpinnerNumberModel(1, 1, 10, 1);
+    SpinnerModel quantiseOfCubesM = new SpinnerNumberModel(2, 1, 12, 1);
+    SpinnerModel requiredQuantiseOfSuccessM = new SpinnerNumberModel(1, 1, 12, 1);
 
     JSpinner successQuantiseT = new JSpinner(successQuantiseM);
     JSpinner quantiseOfCubesT = new JSpinner(quantiseOfCubesM);
@@ -26,6 +26,9 @@ public class gui {
     JTextField successProbabilityT;
     JTextField qAvailableCombinationsT;
     JTextField qSuccessCombinationsT;
+
+    JTextField bernulliTimeRequiredT;
+    JTextField bernulliSuccesResultT;
 
     JLabel successQuantiseL;
     JLabel quantiseOfCubesL;
@@ -59,6 +62,8 @@ public class gui {
         successProbabilityT = new JTextField("%");
         qAvailableCombinationsT = new JTextField("number");
         qSuccessCombinationsT = new JTextField("number");
+        bernulliTimeRequiredT = new JTextField("");
+        bernulliSuccesResultT = new JTextField("");
 
         bCalculation = new JButton("Считать");
         bStopCalculation = new JButton("Остановить расчет");
@@ -96,6 +101,9 @@ public class gui {
                 .addGroup(layout.createParallelGroup(LEADING)
                         .addComponent(bCalculation)
                         .addComponent(bStopCalculation))
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(bernulliSuccesResultT)
+                        .addComponent(bernulliTimeRequiredT))
         );
 
         layout.setHorizontalGroup(layout.createSequentialGroup()
@@ -107,7 +115,8 @@ public class gui {
                         .addComponent(qAvailableCombinationsL)
                         .addComponent(qSuccessCombinationsL)
                         .addComponent(sError)
-                        .addComponent(bCalculation))
+                        .addComponent(bCalculation)
+                        .addComponent(bernulliTimeRequiredT))
                 .addGroup(layout.createParallelGroup(LEADING)
                         .addComponent(successQuantiseT)
                         .addComponent(quantiseOfCubesT)
@@ -116,7 +125,8 @@ public class gui {
                         .addComponent(qAvailableCombinationsT)
                         .addComponent(qSuccessCombinationsT)
                         .addComponent(sTime)
-                        .addComponent(bStopCalculation))
+                        .addComponent(bStopCalculation)
+                        .addComponent(bernulliSuccesResultT))
         );
 
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -134,14 +144,19 @@ public class gui {
                 calcTry.positiveHitMin = Byte.parseByte(successQuantiseT.getValue().toString());
                 calcTry.byteToArrayOfPositiveHits();
                 calcTry.requiredSumOfPositiveResult = Integer.parseInt(requiredQuantiseOfSuccessT.getValue().toString());
-                calcTry.initialise();
+
+                calcTry.calculateWithBernulliFormula();
+                bernulliSuccesResultT.setText(calcTry.getResultBer());
+                bernulliTimeRequiredT.setText(calcTry.getTimeBer());
+
+                /*calcTry.initialise();
                 calcTry.mainController();
                 successProbabilityT.setText(calcTry.getResult());
                 qAvailableCombinationsT.setText(calcTry.getQuantitiesOfAvailableCombinations());
-                qSuccessCombinationsT.setText(calcTry.getQuantitiesOfSuccesCombinations());
+                qSuccessCombinationsT.setText(calcTry.getQuantitiesOfSuccesCombinations());*/
 
                 sError.setText("Расчет выполнен!");
-                sTime.setText(calcTry.getTime());
+                //sTime.setText(calcTry.getTime());
                 mainFrame.pack();
                 mainFrame.repaint();
             } catch (Exception except) {

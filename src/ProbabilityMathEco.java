@@ -13,8 +13,10 @@ public class ProbabilityMathEco {
     int requiredSumOfPositiveResult; //необходимое количество успехов, для зачета успешности броска
     long sumOfPositiveResult = 0; //количество возможных успешных бросков
     long result; //вероятность успешного броска
-    byte positiveHitMin;
-    int time;
+    double bernulliResult; //вероятность успешного броска: Метод Бернулли
+    byte positiveHitMin; //минимальное значение на кубе, считающееся успешным броском
+    int time; //затраченное на перебор время
+    int timeBernulli; //затраченное время методом Бернулли
 
     /*public static void main(String[] args) {
         //Initial parameters
@@ -111,7 +113,6 @@ public class ProbabilityMathEco {
             if (positiveHit.contains(line[i])) sucCounter++;
         }
         if (sucCounter >= requiredSumOfPositiveResult) sumOfPositiveResult++;
-
     }
 
     public void byteToArrayOfPositiveHits() {
@@ -120,6 +121,76 @@ public class ProbabilityMathEco {
             positiveHit.add(i);
             i++;
         }
+    }
+
+    public void calculateWithBernulliFormula() {
+        long startTimeBer = (new Date()).getTime();
+        int iterator = 6 - positiveHitMin;
+        numberProbabilities = (int) Math.pow(6, quantities);
+
+        bernulliResult = bernulliSummator();
+
+
+        long endTimeBer = (new Date()).getTime();
+        timeBernulli = (int) (endTimeBer - startTimeBer);
+    }
+
+    private double bernulliSummator() {
+        double result = 0;
+        for (int j = requiredSumOfPositiveResult; j <= quantities; j++) {
+            double temp = mathBernulliResult(positiveHitMin, j);
+            result += temp;
+            System.out.println(temp);
+        }
+        //result = (long) (result / Math.pow(100, (quantities)));
+        //result = (long) (result / Math.pow(100, (quantities-requiredSumOfPositiveResult)));
+        return result;
+    }
+
+    /*
+    * Formula Bernulli
+    * Метод возвращает результат вычисления вероятности по формуле Бернулли
+    * */
+    private double mathBernulliResult(int positiveHitMinCurrent, int requiredSumOfPositiveResultCurrent) {
+        double bernuliResultOne;
+
+        double probSuc1 = (7 - positiveHitMinCurrent) * 100 / 6; //вероятность события Успех на единичном кубике, %
+        double probFail1 = 100 - probSuc1;
+
+        bernuliResultOne = (countOfSuccesCombination(requiredSumOfPositiveResultCurrent)
+                * Math.pow(probSuc1, requiredSumOfPositiveResultCurrent)
+                * Math.pow(probFail1, (quantities - requiredSumOfPositiveResultCurrent)));
+        /*if (quantities > requiredSumOfPositiveResultCurrent) {
+            bernuliResultOne = bernuliResultOne / Math.pow(100, (quantities - requiredSumOfPositiveResultCurrent));
+        }*/
+        System.out.println("BernulliResult: " + bernuliResultOne);
+        bernuliResultOne = (long) (bernuliResultOne / Math.pow(100, (quantities-1)));
+        return  bernuliResultOne;
+    }
+
+    /*
+    * метод возвращает число удачных комбинаций с заданным количеством "успехов",
+    * https://ru.wikipedia.org/wiki/%D0%A4%D0%BE%D1%80%D0%BC%D1%83%D0%BB%D0%B0_%D0%91%D0%B5%D1%80%D0%BD%D1%83%D0%BB%D0%BB%D0%B8
+    * */
+    private double countOfSuccesCombination(int requiredSumOfPositiveResultCurrent) {
+        int fQuantities = factorial(quantities); //факториал количества испытаний
+        int fRequiredSumOfPositiveResult = factorial(requiredSumOfPositiveResultCurrent); //факториал количества необходимых успехов
+        int fQantMReq = factorial(quantities - requiredSumOfPositiveResultCurrent); //факториал разницы: Количество испытаний - Количество необходимых успехов
+        return fQuantities / (fRequiredSumOfPositiveResult * fQantMReq);
+    }
+
+    /*source https://habrahabr.ru/post/113128/ */
+    public static int factorial(int n) {
+        if (n == 0) return 1;
+        return n * factorial(n - 1);
+    }
+
+    public String getTimeBer() {
+        return "" + timeBernulli + " ms";
+    }
+
+    public String getResultBer() {
+        return "" + bernulliResult + "%";
     }
 
     public String getResult() {
